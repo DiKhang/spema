@@ -20,6 +20,7 @@ const VerifyOTP = () => {
     // } catch (err) {
     //   setError(err.message);
     // }
+    nav.navigate('UpdateProfile', {});
   };
 
   return (
