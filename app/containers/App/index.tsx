@@ -1,4 +1,3 @@
-import React, {type PropsWithChildren} from 'react';
 import {LogBox} from 'react-native';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/lib/integration/react';
