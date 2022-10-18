@@ -15,7 +15,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import {useState} from 'react';
 
 const Login = () => {
-  const nav = useNavigation();
+  const nav = useNavigation<any>();
 
   const [data, setData] = useState({
     username: '',
@@ -132,7 +132,9 @@ const Login = () => {
           </LinearGradient>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {}}
+          onPress={() => {
+            nav.navigate('Register', {});
+          }}
           style={[
             styles.signIn,
             {
@@ -151,9 +153,11 @@ const Login = () => {
             Đăng ký
           </Text>
         </TouchableOpacity>
-        <Text style={{color: '#009387', marginTop: 30, textAlign: 'center'}}>
-          Bạn đã quên mật khẩu ?
-        </Text>
+        <TouchableOpacity>
+          <Text style={{color: '#009387', marginTop: 30, textAlign: 'center'}}>
+            Bạn đã quên mật khẩu ?
+          </Text>
+        </TouchableOpacity>
       </Animatable.View>
     </View>
   );
