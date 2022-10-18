@@ -2,6 +2,8 @@ import {Auth, NoAuth} from '../../layouts';
 import Home from '../Home';
 import Login from '../Login';
 import Register from '../Register';
+import UpdateProfile from '../UpdateProfile';
+import VerifyOTP from '../VerifyOTP';
 
 export default [
   {
@@ -17,6 +19,20 @@ export default [
     layoutParams: {},
     componentParams: {},
     component: Register,
+  },
+  {
+    name: 'OTP',
+    layout: NoAuth,
+    layoutParams: {},
+    componentParams: {},
+    component: VerifyOTP,
+  },
+  {
+    name: 'UpdateProfile',
+    layout: Auth,
+    layoutParams: {},
+    componentParams: {},
+    component: UpdateProfile,
   },
   {
     name: 'Home',
