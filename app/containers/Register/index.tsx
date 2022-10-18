@@ -127,7 +127,11 @@ const Register = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.button}>
-            <TouchableOpacity style={styles.signIn} onPress={() => {}}>
+            <TouchableOpacity
+              style={styles.signIn}
+              onPress={() => {
+                nav.navigate('OTP', {});
+              }}>
               <LinearGradient
                 colors={['#08d4c4', '#01ab9d']}
                 style={styles.signIn}>
