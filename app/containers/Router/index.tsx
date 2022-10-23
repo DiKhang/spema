@@ -1,6 +1,8 @@
-import {NavigationContainer} from '@react-navigation/native';
+import NavBar from '@components/NavBar';
+import {NavigationContainer, useRoute} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
+import {View} from 'react-native-animatable';
 import router from './router';
 
 const Stack = createNativeStackNavigator();
@@ -8,30 +10,48 @@ const Stack = createNativeStackNavigator();
 const Router = () => {
   const refNav = useRef<any>();
 
-  useEffect(() => {}, []);
+  const handleAuthGuard = () => {
+    //handle check user have login ?
+
+    return 'Login';
+  };
+
+  const [currentRoute, setCurrentRoute] = useState<any>(handleAuthGuard());
+
   return (
     <>
-      <NavigationContainer ref={refNav}>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-            headerStyle: {
-              backgroundColor: '#f4511e',
-            },
-            headerTintColor: '#fff',
+      <View
+        style={{
+          flex: 1,
+        }}>
+        <NavigationContainer
+          ref={refNav}
+          onStateChange={state => {
+            setCurrentRoute(state?.routes[state.index].name);
           }}>
-          {router.map((item: any, index: number) => {
-            return (
-              <Stack.Screen
-                key={index}
-                name={item.name}
-                component={item.layout}
-                initialParams={item}
-              />
-            );
-          })}
-        </Stack.Navigator>
-      </NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+              headerStyle: {
+                backgroundColor: '#f4511e',
+              },
+              headerTintColor: '#fff',
+            }}
+            initialRouteName={handleAuthGuard()}>
+            {router.map((item: any, index: number) => {
+              return (
+                <Stack.Screen
+                  key={index}
+                  name={item.name}
+                  component={item.layout}
+                  initialParams={item}
+                />
+              );
+            })}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </View>
+      {currentRoute != 'Login' && <NavBar nav={refNav} />}
     </>
   );
 };
