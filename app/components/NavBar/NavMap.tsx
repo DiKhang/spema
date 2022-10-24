@@ -2,23 +2,23 @@ import Feather from 'react-native-vector-icons/Feather';
 
 export const tabs = [
   {
-    name: 'Home',
+    name: 'Trang chủ',
     activeIcon: <Feather name="home" color="#fff" size={25} />,
-    inactiveIcon: <Feather name="home" color="#4d4d4d" size={25} />,
+    inactiveIcon: <Feather name="home" color="#fff" size={25} />,
   },
   {
-    name: 'camera',
-    activeIcon: <Feather name="camera" color="#fff" size={25} />,
-    inactiveIcon: <Feather name="camera" color="#4d4d4d" size={25} />,
+    name: 'Lịch sử',
+    activeIcon: <Feather name="clock" color="#fff" size={25} />,
+    inactiveIcon: <Feather name="clock" color="#fff" size={25} />,
   },
   {
-    name: 'Notification',
-    activeIcon: <Feather name="bell" color="#fff" size={25} />,
-    inactiveIcon: <Feather name="bell" color="#4d4d4d" size={25} />,
+    name: 'Thống kê',
+    activeIcon: <Feather name="bar-chart" color="#fff" size={25} />,
+    inactiveIcon: <Feather name="bar-chart" color="#fff" size={25} />,
   },
   {
-    name: 'Profile',
+    name: 'Hồ sơ',
     activeIcon: <Feather name="user" color="#fff" size={25} />,
-    inactiveIcon: <Feather name="user" color="#4d4d4d" size={25} />,
+    inactiveIcon: <Feather name="user" color="#fff" size={25} />,
   },
 ];

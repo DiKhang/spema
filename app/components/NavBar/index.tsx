@@ -1,29 +1,33 @@
-import Tabbar from '@components/react-native-tab-bar-interaction';
+import Tabbar from '@components/Tabbar';
+import {setHeight} from '@utils/Display';
 import {tabs} from './NavMap';
 
 interface props {
   nav: any;
+  styles?: any;
 }
 
 const NavBar = (props: props) => {
-  const {nav} = props;
+  const {nav, styles} = props;
 
   return (
     <Tabbar
       tabs={tabs}
-      tabBarContainerBackground="#6699ff"
+      tabBarContainerBackground="#009387"
       tabBarBackground="#fff"
-      activeTabBackground="#6699ff"
+      activeTabBackground="#009387"
       labelStyle={{
-        color: '#4d4d4d',
+        color: '#fff',
         fontWeight: '600',
         fontSize: 11,
       }}
-      onTabChange={() => console.log('Tab changed')}
-      defaultActiveTabIndex={2}
+      onTabChange={() => {}}
+      defaultActiveTabIndex={0}
       styles={{
-        height: 70,
+        height: setHeight(8),
+        width: '100%',
       }}
+      transitionSpeed={200}
     />
   );
 };
