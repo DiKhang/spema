@@ -78,7 +78,7 @@ const Add = (props: Props) => {
               </LinearGradient>
             </TouchableOpacity>
           </View>
-          {choose === 0 || choose === 1 ? <AddDetail /> : null}
+          {choose === 0 || choose === 1 ? <AddDetail type={choose} /> : null}
         </View>
       </ScrollView>
     </View>

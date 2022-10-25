@@ -9,10 +9,20 @@ import AddCard from './Common/AddCard';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Jar from './Common/Jar';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {getDataIOMoney} from '../../redux/reducer/common';
+import {DataIOMoney} from 'app/interfaces';
+import {formatTextPrice} from '@utils/common';
 
 const Home = () => {
-  const [progress, setProgress] = useState(0.7);
+  const [progress, setProgress] = useState(1);
   const nav = useNavigation<any>();
+  const dataIO = useSelector(getDataIOMoney);
+
+  const [total, setTotal] = useState(0);
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
+
   useEffect(() => {
     if (progress < 1) {
       setTimeout(() => {
@@ -22,6 +32,56 @@ const Home = () => {
       setProgress(0);
     }
   }, [progress]);
+
+  const handleGetTotal = (data: DataIOMoney) => {
+    let total = 0;
+    let income = 0;
+    let expense = 0;
+    dataIO?.forEach((item: DataIOMoney) => {
+      if (item.type === 'income') {
+        total += item.amount;
+        income += item.amount;
+      } else if (item.type === 'expense') {
+        total -= item.amount;
+        expense += item.amount;
+      }
+    });
+
+    setTotal(total);
+    setIncome(income);
+    setExpense(expense);
+    setProgress(total / income);
+  };
+
+  const getMoneyOneJar = (jar: string) => {
+    let total = 0;
+    if (dataIO) {
+      dataIO.forEach((item: DataIOMoney) => {
+        if (item.jar === jar) {
+          if (item.type === 'income') {
+            total += item.amount;
+          }
+          if (item.type === 'expense') {
+            total -= item.amount;
+          }
+          if (item.type === 'receive') {
+            total += item.amount;
+          }
+          if (item.type === 'transfer') {
+            total -= item.amount;
+          }
+        }
+      });
+      return formatTextPrice(total);
+    }
+    return '0';
+  };
+
+  useEffect(() => {
+    if (dataIO) {
+      handleGetTotal(dataIO[0]);
+    }
+  }, [dataIO]);
 
   return (
     <ScrollView>
@@ -52,7 +112,9 @@ const Home = () => {
               </View>
               <View style={styles.totalCardText}>
                 <Text style={styles.totalCardTitle}>Tổng số tiền</Text>
-                <Text style={styles.totalCardValue}>100.000.000 đ</Text>
+                <Text style={styles.totalCardValue}>
+                  {formatTextPrice(total.toString())} đ
+                </Text>
               </View>
             </LinearGradient>
           </View>
@@ -62,7 +124,7 @@ const Home = () => {
             <View style={styles.addZoneItem}>
               <AddCard
                 nameCard="Thu nhập"
-                money="100.000.000"
+                money={formatTextPrice(income.toString())}
                 icon={
                   <MaterialCommunityIcons
                     name="plus-circle"
@@ -78,7 +140,7 @@ const Home = () => {
             <View style={styles.addZoneItem}>
               <AddCard
                 nameCard="Chi tiêu"
-                money="70.000.000"
+                money={formatTextPrice(expense.toString())}
                 icon={
                   <MaterialCommunityIcons
                     name="plus-circle"
@@ -98,7 +160,7 @@ const Home = () => {
             <View style={styles.jarItem}>
               <Jar
                 title="Thiết yếu"
-                money="20.000.000"
+                money={getMoneyOneJar('essential')}
                 progress={0.79}
                 backgroundColor={ColorPalette.pink}
               />
@@ -106,7 +168,7 @@ const Home = () => {
             <View style={styles.jarItem}>
               <Jar
                 title="Giáo dục"
-                money="10.000.000"
+                money={getMoneyOneJar('education')}
                 progress={0.59}
                 backgroundColor={ColorPalette.blue}
               />
@@ -114,7 +176,7 @@ const Home = () => {
             <View style={styles.jarItem}>
               <Jar
                 title="Tiết kiệm"
-                money="7.000.000"
+                money={getMoneyOneJar('saving')}
                 progress={1}
                 backgroundColor={ColorPalette.yellow}
               />
@@ -122,7 +184,7 @@ const Home = () => {
             <View style={styles.jarItem}>
               <Jar
                 title="Hưởng thụ"
-                money="2.000.000"
+                money={getMoneyOneJar('enjoy')}
                 progress={0.3}
                 backgroundColor={ColorPalette.purple}
               />
@@ -130,7 +192,7 @@ const Home = () => {
             <View style={styles.jarItem}>
               <Jar
                 title="Đầu tư"
-                money="8.000.000"
+                money={getMoneyOneJar('investment')}
                 progress={0.5}
                 backgroundColor={ColorPalette.green}
               />
@@ -138,7 +200,7 @@ const Home = () => {
             <View style={styles.jarItem}>
               <Jar
                 title="Từ thiện"
-                money="800.000"
+                money={getMoneyOneJar('charity')}
                 progress={0.1}
                 backgroundColor={ColorPalette.red}
               />

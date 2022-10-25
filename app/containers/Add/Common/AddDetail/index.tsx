@@ -9,14 +9,24 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
+import {DataIOMoney} from 'app/interfaces';
+import {useDispatch} from 'react-redux';
+import {addDataIOMoney} from '../../../../redux/reducer/common';
 
-const AddDetail = () => {
+interface Props {
+  type: number;
+}
+
+const AddDetail = (props: Props) => {
+  const {type} = props;
+  const dispatch = useDispatch();
   const nav = useNavigation<any>();
   const [money, setMoney] = useState<number>(0);
   const [data, setData] = useState({
     date: '',
     note: '',
     tag: '',
+    jar: 'all',
   });
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -46,6 +56,81 @@ const AddDetail = () => {
   };
 
   const handleFinish = () => {
+    //| 'essential'
+    // | 'education'
+    // | 'saving'
+    // | 'enjoy'
+    // | 'investment'
+    // | 'charity'
+    // | string;
+    let newDataIO: DataIOMoney[] = [
+      {
+        id: 100,
+        amount: money * 0.55,
+        date: data.date,
+        description: data.note,
+        tag: [`#${data.tag}`],
+        type: type === 0 ? 'income' : 'expense',
+        jar: 'essential',
+        at: '2022-10-25',
+      },
+      {
+        id: 101,
+        amount: money * 0.1,
+        date: data.date,
+        description: data.note,
+        tag: [`#${data.tag}`],
+        type: type === 0 ? 'income' : 'expense',
+        jar: 'education',
+        at: '2022-10-25',
+      },
+      {
+        id: 102,
+        amount: money * 0.1,
+        date: data.date,
+        description: data.note,
+        tag: [`#${data.tag}`],
+        type: type === 0 ? 'income' : 'expense',
+        jar: 'saving',
+        at: '2022-10-25',
+      },
+      {
+        id: 103,
+        amount: money * 0.1,
+        date: data.date,
+        description: data.note,
+        tag: [`#${data.tag}`],
+        type: type === 0 ? 'income' : 'expense',
+        jar: 'enjoy',
+        at: '2022-10-25',
+      },
+      {
+        id: 104,
+        amount: money * 0.1,
+        date: data.date,
+        description: data.note,
+        tag: [`#${data.tag}`],
+        type: type === 0 ? 'income' : 'expense',
+        jar: 'investment',
+        at: '2022-10-25',
+      },
+      {
+        id: 105,
+        amount: money * 0.05,
+        date: data.date,
+        description: data.note,
+        tag: [`#${data.tag}`],
+        type: type === 0 ? 'income' : 'expense',
+        jar: 'charity',
+        at: '2022-10-25',
+      },
+    ];
+
+    newDataIO.forEach(item => {
+      dispatch(addDataIOMoney(item));
+    });
+    // dispatch(addDataIOMoney(newDataIO));
+
     nav.navigate('Home', {});
   };
 
@@ -97,7 +182,12 @@ const AddDetail = () => {
             placeholderTextColor={ColorPalette.white}
             style={styles.textDate}
             autoCapitalize="none"
-            onChangeText={val => {}}
+            onChangeText={val => {
+              setData({
+                ...data,
+                note: val,
+              });
+            }}
           />
         </View>
         <View style={styles.action}>
@@ -107,7 +197,12 @@ const AddDetail = () => {
             placeholderTextColor={ColorPalette.white}
             style={styles.textDate}
             autoCapitalize="none"
-            onChangeText={val => {}}
+            onChangeText={val => {
+              setData({
+                ...data,
+                tag: val,
+              });
+            }}
           />
         </View>
       </View>
