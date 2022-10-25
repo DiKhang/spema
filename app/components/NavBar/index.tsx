@@ -21,7 +21,16 @@ const NavBar = (props: props) => {
         fontWeight: '600',
         fontSize: 11,
       }}
-      onTabChange={() => {}}
+      onTabChange={(item: any) => {
+        let tempTabs = [...tabs];
+        setTimeout(() => {
+          tempTabs.map(val => {
+            if (val.name === 'Trang chủ' && item.name === 'Trang chủ') {
+              nav.current.navigate('Home', {});
+            }
+          });
+        }, 230);
+      }}
       defaultActiveTabIndex={0}
       styles={{
         height: setHeight(8),

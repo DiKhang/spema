@@ -8,10 +8,11 @@ import * as Progress from 'react-native-progress';
 import AddCard from './Common/AddCard';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Jar from './Common/Jar';
+import {useNavigation} from '@react-navigation/native';
 
 const Home = () => {
   const [progress, setProgress] = useState(0.7);
-
+  const nav = useNavigation<any>();
   useEffect(() => {
     if (progress < 1) {
       setTimeout(() => {
@@ -24,7 +25,7 @@ const Home = () => {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
+      <Animatable.View animation={'fadeInUpBig'} style={styles.container}>
         <TouchableOpacity style={styles.total} disabled={true}>
           <View style={styles.totalCard}>
             <LinearGradient
@@ -69,6 +70,9 @@ const Home = () => {
                     color="#fff"
                   />
                 }
+                onPress={() => {
+                  nav.navigate('Add', {type: 0});
+                }}
               />
             </View>
             <View style={styles.addZoneItem}>
@@ -82,6 +86,9 @@ const Home = () => {
                     color="#fff"
                   />
                 }
+                onPress={() => {
+                  nav.navigate('Add', {type: 1});
+                }}
               />
             </View>
           </View>
@@ -138,7 +145,7 @@ const Home = () => {
             </View>
           </View>
         </View>
-      </View>
+      </Animatable.View>
     </ScrollView>
   );
 };
