@@ -1,4 +1,5 @@
 import {Auth, NoAuth} from '../../layouts';
+import Add from '../Add';
 import Home from '../Home';
 import Login from '../Login';
 import Register from '../Register';
@@ -40,5 +41,12 @@ export default [
     layoutParams: {},
     componentParams: {},
     component: Home,
+  },
+  {
+    name: 'Add',
+    layout: Auth,
+    layoutParams: {},
+    componentParams: {},
+    component: Add,
   },
 ];

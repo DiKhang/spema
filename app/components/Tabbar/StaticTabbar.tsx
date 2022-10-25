@@ -10,7 +10,7 @@ import {
   I18nManager,
 } from 'react-native';
 
-import {TabsType} from './TabBar';
+import {TabsType} from '.';
 let {width} = Dimensions.get('window');
 var prevIndex = -1;
 
@@ -53,7 +53,7 @@ export default class StaticTabbar extends React.PureComponent<Props> {
   }
 
   //RTL SUPORT
-  range(start, end) {
+  range(start: any, end: any) {
     var len = end - start;
     var a = new Array(len);
     for (let i = 0; i < len; i++) a[i] = start + i;
@@ -79,12 +79,12 @@ export default class StaticTabbar extends React.PureComponent<Props> {
               }),
           ),
         ),
-        Animated.timing(value, {
+        Animated.timing(value as any, {
           toValue: I18nManager.isRTL
             ? customWidth + tabWidth * rangeNumber[index]
             : tabWidth * index,
           useNativeDriver: true,
-          duration: noAnimation ? 0 : transitionDuration,
+          duration: noAnimation ? 0 : (transitionDuration as number),
         }),
         Animated.timing(this.values[index], {
           toValue: 1,
@@ -121,7 +121,7 @@ export default class StaticTabbar extends React.PureComponent<Props> {
             ? customWidth + tabWidth * rangeNumber[key]
             : tabWidth * key;
 
-          const opacity = value.interpolate({
+          const opacity = value?.interpolate({
             inputRange: [cursor - tabWidth, cursor, cursor + tabWidth],
             outputRange: [1, 0, 1],
             extrapolate: 'clamp',

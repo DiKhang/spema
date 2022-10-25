@@ -1,6 +1,7 @@
 import {ReduxState} from './../../interfaces/index';
 import {createSlice} from '@reduxjs/toolkit';
 import {DataRedux} from '../../interfaces';
+import {data} from '@utils/dataTest';
 
 const initialState: DataRedux = {
   data: null,
