@@ -13,7 +13,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import {useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
-import {register} from '@utils/service/firebase';
 
 const Register = () => {
   const nav = useNavigation<any>();
@@ -69,19 +68,7 @@ const Register = () => {
 
   const handleRegister = () => {
     console.log('Register');
-    register({
-      email: data.username,
-      password: data.password,
-      actions: {
-        errorHandle(error) {
-          console.log(error);
-        },
-        successHandle(user) {
-          console.log(JSON.stringify(user));
-          nav.navigate('OTP', {});
-        },
-      },
-    });
+    nav.navigate('Login', {});
   };
 
   return (

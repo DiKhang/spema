@@ -1,7 +1,6 @@
 import NavBar from '@components/NavBar';
 import {NavigationContainer, useRoute} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {authGuard} from '@utils/service/firebase';
 import {useEffect, useRef, useState} from 'react';
 import {View} from 'react-native-animatable';
 import SplashScreen from 'react-native-splash-screen';
@@ -15,24 +14,7 @@ const Router = () => {
   const handleAuthGuard = () => {
     //handle check user have login ?
 
-    // SplashScreen.hide();
-    // SplashScreen.hide();
-
-    const timeOut = setTimeout(() => {}, 4000);
-
-    authGuard({
-      successHandle(user) {
-        console.log('user', user);
-        refNav.current?.navigate('Home');
-        clearTimeout(timeOut);
-        SplashScreen?.hide();
-      },
-      errorHandle() {
-        refNav.current?.navigate('Login');
-        SplashScreen?.hide();
-        clearTimeout(timeOut);
-      },
-    });
+    SplashScreen.hide();
   };
 
   useEffect(() => {
