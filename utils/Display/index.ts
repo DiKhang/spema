@@ -30,4 +30,8 @@ export const ColorPalette = {
   purple: '#7a0b5a',
   green: '#11db0d',
   red: '#a3072e',
+  asset1: '#00bfa5',
+  asset2: '#ff6d00',
+  asset3: '#f50057',
+  asset4: '#7c4dff',
 };

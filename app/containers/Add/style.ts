@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     width: setWidth(90),
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     height: setHeight(5),
     alignItems: 'center',
     backgroundColor: ColorPalette.gray,
@@ -26,6 +26,12 @@ export const styles = StyleSheet.create({
   },
   button: {
     width: '33.3333%',
+    height: '100%',
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+  },
+  button_4: {
+    width: '25%',
     height: '100%',
     backgroundColor: 'transparent',
     justifyContent: 'center',

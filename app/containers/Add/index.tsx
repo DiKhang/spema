@@ -12,6 +12,7 @@ interface Params {
   layoutParams?: any;
   componentParams?: any;
   type?: number;
+  tabList?: any;
 }
 
 interface Props {
@@ -20,7 +21,7 @@ interface Props {
 
 const Add = (props: Props) => {
   const {params} = props;
-  const {name, layoutParams, componentParams, type} = params;
+  const {name, layoutParams, componentParams, type, tabList} = params;
   const [choose, setChoose] = useState(0);
 
   const changeChoose = (index: number) => {
@@ -32,13 +33,29 @@ const Add = (props: Props) => {
       setChoose(type);
     }
   }, []);
+
   return (
     <View style={styles.container}>
       <Header />
       <ScrollView>
         <View style={styles.containerDetail}>
           <View style={styles.radioButton}>
-            <TouchableOpacity
+            {tabList?.map((item: any, index: number) => (
+              <TouchableOpacity
+                style={tabList.length > 3 ? styles.button_4 : styles.button}
+                onPress={() => changeChoose(item.id)}>
+                <LinearGradient
+                  colors={
+                    choose === item.id
+                      ? ['#08d4c4', '#01ab9d']
+                      : [ColorPalette.gray, ColorPalette.gray]
+                  }
+                  style={styles.buttonDetail}>
+                  <Text style={styles.textRadioButton}>{item.value}</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            ))}
+            {/* <TouchableOpacity
               style={styles.button}
               onPress={() => changeChoose(0)}>
               <LinearGradient
@@ -76,7 +93,7 @@ const Add = (props: Props) => {
                 style={styles.buttonDetail}>
                 <Text style={styles.textRadioButton}>CHUYỂN HŨ</Text>
               </LinearGradient>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           {choose === 0 || choose === 1 ? <AddDetail type={choose} /> : null}
         </View>

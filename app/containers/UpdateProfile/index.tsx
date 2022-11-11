@@ -90,7 +90,7 @@ const UpdateProfile = () => {
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
-              placeholder="Lê Dĩ Khang"
+              placeholder="Trần Hữu Thọ"
               style={styles.textInput}
               autoCapitalize="none"
               onChangeText={val => textNameChange(val)}

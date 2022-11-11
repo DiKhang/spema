@@ -5,6 +5,7 @@ import Login from '../Login';
 import Register from '../Register';
 import UpdateProfile from '../UpdateProfile';
 import VerifyOTP from '../VerifyOTP';
+import Profile from '../Profile';
 
 export default [
   {
@@ -48,5 +49,12 @@ export default [
     layoutParams: {},
     componentParams: {},
     component: Add,
+  },
+  {
+    name: 'Profile',
+    layout: Auth,
+    layoutParams: {},
+    componentParams: {},
+    component: Profile,
   },
 ];

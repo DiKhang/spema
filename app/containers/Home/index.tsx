@@ -82,6 +82,20 @@ const Home = () => {
       handleGetTotal(dataIO[0]);
     }
   }, [dataIO]);
+  const [tabList, setTabList] = useState([
+    {
+      id: 0,
+      value: 'Thu nhập',
+    },
+    {
+      id: 1,
+      value: 'Chi tiêu',
+    },
+    {
+      id: 2,
+      value: 'Chuyển hủ',
+    },
+  ]);
 
   return (
     <ScrollView>
@@ -133,7 +147,7 @@ const Home = () => {
                   />
                 }
                 onPress={() => {
-                  nav.navigate('Add', {type: 0});
+                  nav.navigate('Add', {type: 0, tabList: tabList});
                 }}
               />
             </View>

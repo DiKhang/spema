@@ -28,6 +28,9 @@ const NavBar = (props: props) => {
             if (val.name === 'Trang chủ' && item.name === 'Trang chủ') {
               nav.current.navigate('Home', {});
             }
+            if (val.name === 'Hồ sơ' && item.name === 'Hồ sơ') {
+              nav.current.navigate('Profile', {});
+            }
           });
         }, 230);
       }}
