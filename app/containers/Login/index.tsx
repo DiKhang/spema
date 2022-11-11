@@ -13,6 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import {useState} from 'react';
+import {login} from '@utils/service/firebase';
 
 const Login = () => {
   const nav = useNavigation<any>();
@@ -59,12 +60,30 @@ const Login = () => {
       });
     }
   };
+
   const updateSecureTextEntry = () => {
     setData({
       ...data,
       secureTextEntry: !data.secureTextEntry,
     });
   };
+
+  const handleLogin = () => {
+    login({
+      email: data.username,
+      password: data.password,
+      actions: {
+        errorHandle(error) {
+          console.log(error);
+        },
+        successHandle(user) {
+          console.log(JSON.stringify(user));
+          nav.navigate('Home', {});
+        },
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -118,9 +137,7 @@ const Login = () => {
             )}
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => nav.navigate('Home', {})}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <LinearGradient colors={['#08d4c4', '#01ab9d']} style={styles.signIn}>
             <Text
               style={[

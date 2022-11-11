@@ -13,6 +13,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import {useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
+import {register} from '@utils/service/firebase';
 
 const Register = () => {
   const nav = useNavigation<any>();
@@ -65,6 +66,24 @@ const Register = () => {
       confirm_secureTextEntry: !data.confirm_secureTextEntry,
     });
   };
+
+  const handleRegister = () => {
+    console.log('Register');
+    register({
+      email: data.username,
+      password: data.password,
+      actions: {
+        errorHandle(error) {
+          console.log(error);
+        },
+        successHandle(user) {
+          console.log(JSON.stringify(user));
+          nav.navigate('OTP', {});
+        },
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
@@ -127,11 +146,7 @@ const Register = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.button}>
-            <TouchableOpacity
-              style={styles.signIn}
-              onPress={() => {
-                nav.navigate('OTP', {});
-              }}>
+            <TouchableOpacity style={styles.signIn} onPress={handleRegister}>
               <LinearGradient
                 colors={['#08d4c4', '#01ab9d']}
                 style={styles.signIn}>
