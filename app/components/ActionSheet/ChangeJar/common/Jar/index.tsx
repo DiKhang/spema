@@ -1,6 +1,6 @@
 import {Icon} from '@rneui/base';
 import {ColorPalette} from '@utils/Display';
-import {Text, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {Bar} from 'react-native-progress';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -10,11 +10,11 @@ interface Props {
   backgroundColor?: string;
   title: string;
   money: string;
-  progress: number;
+  defaultPercent: number;
 }
 
 const Jar = (props: Props) => {
-  const {backgroundColor, title, money, progress} = props;
+  const {backgroundColor, title, money, defaultPercent} = props;
   return (
     <View style={styles.container}>
       <View style={styles.icon}>
@@ -33,29 +33,20 @@ const Jar = (props: Props) => {
         <View style={styles.mainContent}>
           <View style={styles.mainContentLeft}>
             <Text style={styles.title}>{title}</Text>
+            <Text style={styles.money}>{money} đ</Text>
           </View>
           <View style={styles.mainContentRight}>
-            <Text style={styles.money}>{money} đ</Text>
-            <Text style={styles.percent}> {(progress * 100).toFixed(0)}%</Text>
+            <TouchableOpacity>
+              <Text style={styles.percent}>+</Text>
+            </TouchableOpacity>
+            <Text style={styles.percent}>
+              {(defaultPercent * 100).toFixed(0)}%
+            </Text>
+            <TouchableOpacity>
+              <Text style={styles.percent}>-</Text>
+            </TouchableOpacity>
           </View>
         </View>
-        <View>
-          <Bar
-            progress={progress}
-            color={ColorPalette.white}
-            unfilledColor={ColorPalette.pink}
-            borderWidth={0}
-            borderRadius={30}
-            width={null}
-          />
-        </View>
-      </View>
-      <View style={styles.next}>
-        <MaterialIcons
-          name="navigate-next"
-          size={30}
-          color={ColorPalette.pink}
-        />
       </View>
     </View>
   );

@@ -13,13 +13,16 @@ import {useNavigation} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import {useState} from 'react';
+import useAxios from '@hook/useAxios';
 
 const Login = () => {
   const nav = useNavigation<any>();
 
+  const {call} = useAxios();
+
   const [data, setData] = useState({
-    username: '',
-    password: '',
+    username: 'dikhang4work@gmail.com',
+    password: '123123',
     check_textInputChange: false,
     secureTextEntry: true,
     isValidUser: true,
@@ -68,7 +71,24 @@ const Login = () => {
   };
 
   const handleLogin = () => {
-    nav.navigate('Home');
+    call({
+      config: {
+        url: 'https://sepma.onrender.com/api/v1/auth/login',
+        method: 'POST',
+        data: {
+          username: data.username,
+          password: data.password,
+        },
+      },
+      callbackSuccess: data => {
+        console.log(data);
+        nav.navigate('Home');
+      },
+      callbackError(e) {
+        console.log(e);
+      },
+      isLoading: true,
+    });
   };
 
   return (

@@ -12,6 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import {DataIOMoney} from 'app/interfaces';
 import {useDispatch} from 'react-redux';
 import {addDataIOMoney} from '../../../../redux/reducer/common';
+import {SheetManager} from 'react-native-actions-sheet';
 
 interface Props {
   type: number;
@@ -148,7 +149,12 @@ const AddDetail = (props: Props) => {
           onChange={e => setMoney(validatePlate(e.nativeEvent.text))}
         />
       </View>
-      <TouchableOpacity style={styles.changeJar}>
+      <TouchableOpacity
+        style={styles.changeJar}
+        onPress={() => {
+          console.log('change jar');
+          SheetManager.show('changeJar');
+        }}>
         <View style={styles.iconLeft}>
           <View style={styles.iconLeftDetail}>
             <Fontisto

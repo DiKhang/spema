@@ -16,6 +16,25 @@ export interface DataIOMoney {
   at: string;
 }
 
+export interface Modal {
+  name: string | null;
+  props: object;
+}
+
+export interface Loading {
+  show: boolean;
+  props: object;
+}
+
+export interface Notify {
+  show: boolean;
+  props: {
+    content: string;
+    accept?: any;
+    denied?: any;
+  };
+}
+
 export interface DataRedux {
   data: any;
 }
@@ -23,6 +42,9 @@ export interface DataRedux {
 export interface CommonRedux {
   common: any;
   dataIOMoney: DataIOMoney[] | null;
+  modal: Modal;
+  loading: Loading;
+  notify: Notify;
 }
 
 export interface ReduxState {

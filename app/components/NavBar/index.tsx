@@ -27,6 +27,12 @@ const NavBar = (props: props) => {
           tempTabs.map(val => {
             if (val.name === 'Trang chủ' && item.name === 'Trang chủ') {
               nav.current.navigate('Home', {});
+            } else if (val.name === 'Lịch sử' && item.name === 'Lịch sử') {
+              nav.current.navigate('History', {});
+            } else if (val.name === 'Thống kê' && item.name === 'Thống kê') {
+              nav.current.navigate('Statistical', {});
+            } else if (val.name === 'Hồ sơ' && item.name === 'Hồ sơ') {
+              nav.current.navigate('Profile', {});
             }
           });
         }, 230);

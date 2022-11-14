@@ -68,7 +68,7 @@ const Register = () => {
 
   const handleRegister = () => {
     console.log('Register');
-    nav.navigate('Login', {});
+    nav.navigate('OTP', {});
   };
 
   return (
