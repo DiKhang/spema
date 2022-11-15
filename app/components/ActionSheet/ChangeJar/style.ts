@@ -31,4 +31,12 @@ export const styles = StyleSheet.create({
     fontWeight: 'normal',
     color: ColorPalette.primary,
   },
+  textError: {
+    marginTop: 10,
+    fontSize: 14,
+    fontWeight: 'normal',
+    color: ColorPalette.red,
+    width: '90%',
+    textAlign: 'right',
+  },
 });

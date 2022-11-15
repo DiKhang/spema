@@ -5,18 +5,26 @@ import {setLoading} from '../../redux/reducer/common';
 import {useEffect, useRef, useState} from 'react';
 import {View} from 'react-native-animatable';
 import SplashScreen from 'react-native-splash-screen';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Loading from '../Loading';
 import Modal from '../Modal';
 import router from './router';
+import Notify from '../Notify';
+import {getUser} from '../../redux/reducer/data';
 
 const Stack = createNativeStackNavigator();
 
 const Router = () => {
   const refNav = useRef<any>();
   const dispatch = useDispatch();
+  const userData = useSelector(getUser);
   const handleAuthGuard = () => {
     //handle check user have login ?
+    if (userData !== null) {
+      refNav.current?.navigate('Home');
+    } else {
+      refNav.current?.navigate('Login');
+    }
     SplashScreen.hide();
     // dispatch(
     //   setLoading({
@@ -69,6 +77,7 @@ const Router = () => {
       )}
       <Modal />
       <Loading />
+      <Notify />
     </>
   );
 };

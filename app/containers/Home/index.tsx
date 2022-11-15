@@ -9,10 +9,18 @@ import AddCard from './Common/AddCard';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Jar from './Common/Jar';
 import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import {getDataIOMoney} from '../../redux/reducer/common';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  getData,
+  getDataIOMoney,
+  setData,
+  setNotify,
+} from '../../redux/reducer/common';
 import {DataIOMoney} from 'app/interfaces';
 import {formatTextPrice} from '@utils/common';
+import {getToken, getUser} from '../../redux/reducer/data';
+import useAxios from '@hook/useAxios';
+import Host, {endPoint} from '@api/host';
 
 const Home = () => {
   const [progress, setProgress] = useState(1);
@@ -23,6 +31,129 @@ const Home = () => {
   const [income, setIncome] = useState(0);
   const [expense, setExpense] = useState(0);
 
+  const dispatch = useDispatch();
+
+  const userData = useSelector(getUser);
+  const token = useSelector(getToken);
+  const mainData = useSelector(getData);
+
+  const {call} = useAxios();
+
+  const [moneyOneJar, setMoneyOneJar] = useState<any>([]);
+
+  const InsertForNewAccount = async () => {
+    await call({
+      config: {
+        url: Host + endPoint.insertMany.url,
+        method: endPoint.insertMany.method,
+        headers: {
+          collection: 'Data',
+          jwt: 'JWT ' + token.accessToken,
+        },
+        data: {
+          userID: userData.userID,
+          data: [
+            {
+              userID: userData.userID,
+              asset: [],
+              dream: [],
+              debts: [],
+              jar: [
+                {
+                  name: 'essential',
+                  history: [],
+                },
+                {
+                  name: 'education',
+                  history: [],
+                },
+                {
+                  name: 'saving',
+                  history: [],
+                },
+                {
+                  name: 'enjoy',
+                  history: [],
+                },
+                {
+                  name: 'investment',
+                  history: [],
+                },
+                {
+                  name: 'charity',
+                  history: [],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      isLoading: true,
+      callbackSuccess(data) {
+        if (data.status) {
+          GetDataByUserID();
+        }
+      },
+      callbackError(err) {
+        dispatch(
+          setNotify({
+            show: true,
+            props: {
+              content: err.message,
+              accept: null,
+              denied: null,
+            },
+          }),
+        );
+      },
+    });
+  };
+
+  const GetDataByUserID = async () => {
+    await call({
+      config: {
+        url: Host + endPoint.getMany.url,
+        method: endPoint.getMany.method,
+        headers: {
+          collection: 'Data',
+          jwt: 'JWT ' + token.accessToken,
+        },
+        data: {
+          userID: userData.userID,
+          query: {
+            userID: userData.userID,
+          },
+        },
+      },
+      isLoading: true,
+      callbackSuccess(data) {
+        if (!data.status) {
+          dispatch(
+            setNotify({
+              show: true,
+              props: {
+                content: 'Đã có lỗi xảy ra vui lòng thử lại',
+                accept: null,
+                denied: null,
+              },
+            }),
+          );
+          return;
+        }
+        if (data.data === null) {
+          InsertForNewAccount();
+          return;
+        } else {
+          delete data.data._id;
+          delete data.data.userID;
+          dispatch(setData(data.data));
+        }
+      },
+      callbackError(e) {
+        console.log(e);
+      },
+    });
+  };
   useEffect(() => {
     if (progress < 1) {
       setTimeout(() => {
@@ -33,56 +164,70 @@ const Home = () => {
     }
   }, [progress]);
 
-  const handleGetTotal = (data: DataIOMoney) => {
+  useEffect(() => {
+    if (userData && token) {
+      GetDataByUserID();
+    }
+  }, []);
+  const handleGetTotal = () => {
     let total = 0;
     let income = 0;
     let expense = 0;
-    dataIO?.forEach((item: DataIOMoney) => {
-      if (item.type === 'income') {
-        total += item.amount;
-        income += item.amount;
-      } else if (item.type === 'expense') {
-        total -= item.amount;
-        expense += item.amount;
-      }
-    });
-
+    mainData &&
+      mainData.jar.forEach(item => {
+        item.history.forEach(item_ => {
+          if (item_.type === 'expense') {
+            expense += item_.money;
+            total -= item_.money;
+          } else if (item_.type === 'income') {
+            income += item_.money;
+            total += item_.money;
+          }
+        });
+      });
     setTotal(total);
     setIncome(income);
     setExpense(expense);
-    setProgress(total / income);
+    income !== 0 ? setProgress(total / income) : setProgress(0);
   };
 
-  const getMoneyOneJar = (jar: string) => {
+  const handleGetMoneyOneJar = () => {
+    let tmp = [];
     let total = 0;
-    if (dataIO) {
-      dataIO.forEach((item: DataIOMoney) => {
-        if (item.jar === jar) {
-          if (item.type === 'income') {
-            total += item.amount;
+    let percent = 0;
+    let input = 0;
+    let output = 0;
+    mainData &&
+      mainData.jar.forEach(item => {
+        item.history.forEach(item_ => {
+          if (item_.type === 'income') {
+            total += item_.money;
+            input += item_.money;
+          } else if (item_.type === 'expense') {
+            total -= item_.money;
+            output += item_.money;
+          } else if (item_.type === 'receive') {
+            total += item_.money;
+            input += item_.money;
+          } else if (item_.type === 'transfer') {
+            total -= item_.money;
+            output += item_.money;
           }
-          if (item.type === 'expense') {
-            total -= item.amount;
-          }
-          if (item.type === 'receive') {
-            total += item.amount;
-          }
-          if (item.type === 'transfer') {
-            total -= item.amount;
-          }
-        }
+        });
+        percent = input !== 0 ? total / input : 0;
+        tmp.push({
+          total: total,
+          percent: percent,
+        });
+        total = 0;
       });
-      return formatTextPrice(total);
-    }
-    return '0';
+    setMoneyOneJar(tmp);
   };
 
   useEffect(() => {
-    if (dataIO) {
-      handleGetTotal(dataIO[0]);
-    }
-  }, [dataIO]);
-
+    handleGetTotal();
+    handleGetMoneyOneJar();
+  }, [mainData]);
   return (
     <ScrollView>
       <Animatable.View animation={'fadeInUpBig'} style={styles.container}>
@@ -133,7 +278,7 @@ const Home = () => {
                   />
                 }
                 onPress={() => {
-                  nav.navigate('Add', {type: 0});
+                  nav.navigate('Add', {type: 0, func: GetDataByUserID});
                 }}
               />
             </View>
@@ -149,7 +294,7 @@ const Home = () => {
                   />
                 }
                 onPress={() => {
-                  nav.navigate('Add', {type: 1});
+                  nav.navigate('Add', {type: 1, func: GetDataByUserID});
                 }}
               />
             </View>
@@ -160,48 +305,48 @@ const Home = () => {
             <View style={styles.jarItem}>
               <Jar
                 title="Thiết yếu"
-                money={getMoneyOneJar('essential')}
-                progress={0.79}
+                money={moneyOneJar[0]?.total.toFixed(0)}
+                progress={moneyOneJar[0]?.percent}
                 backgroundColor={ColorPalette.pink}
               />
             </View>
             <View style={styles.jarItem}>
               <Jar
                 title="Giáo dục"
-                money={getMoneyOneJar('education')}
-                progress={0.59}
+                money={moneyOneJar[1]?.total.toFixed(0)}
+                progress={moneyOneJar[1]?.percent}
                 backgroundColor={ColorPalette.blue}
               />
             </View>
             <View style={styles.jarItem}>
               <Jar
                 title="Tiết kiệm"
-                money={getMoneyOneJar('saving')}
-                progress={1}
+                money={moneyOneJar[2]?.total.toFixed(0)}
+                progress={moneyOneJar[2]?.percent}
                 backgroundColor={ColorPalette.yellow}
               />
             </View>
             <View style={styles.jarItem}>
               <Jar
                 title="Hưởng thụ"
-                money={getMoneyOneJar('enjoy')}
-                progress={0.3}
+                money={moneyOneJar[3]?.total.toFixed(0)}
+                progress={moneyOneJar[3]?.percent}
                 backgroundColor={ColorPalette.purple}
               />
             </View>
             <View style={styles.jarItem}>
               <Jar
                 title="Đầu tư"
-                money={getMoneyOneJar('investment')}
-                progress={0.5}
+                money={moneyOneJar[4]?.total.toFixed(0)}
+                progress={moneyOneJar[4]?.percent}
                 backgroundColor={ColorPalette.green}
               />
             </View>
             <View style={styles.jarItem}>
               <Jar
                 title="Từ thiện"
-                money={getMoneyOneJar('charity')}
-                progress={0.1}
+                money={moneyOneJar[5]?.total.toFixed(0)}
+                progress={moneyOneJar[5]?.percent}
                 backgroundColor={ColorPalette.red}
               />
             </View>

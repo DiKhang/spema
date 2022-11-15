@@ -10,16 +10,26 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
 import {DataIOMoney} from 'app/interfaces';
-import {useDispatch} from 'react-redux';
-import {addDataIOMoney} from '../../../../redux/reducer/common';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  addDataIOMoney,
+  getData,
+  getRatio,
+  setNotify,
+} from '../../../../redux/reducer/common';
 import {SheetManager} from 'react-native-actions-sheet';
+import uuid from 'react-native-uuid';
+import useAxios from '@hook/useAxios';
+import Host, {endPoint} from '@api/host';
+import {getToken, getUser} from '../../../../redux/reducer/data';
 
 interface Props {
   type: number;
+  func?: () => void;
 }
 
 const AddDetail = (props: Props) => {
-  const {type} = props;
+  const {type, func} = props;
   const dispatch = useDispatch();
   const nav = useNavigation<any>();
   const [money, setMoney] = useState<number>(0);
@@ -28,8 +38,23 @@ const AddDetail = (props: Props) => {
     note: '',
     tag: '',
     jar: 'all',
+    dateString: '',
   });
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const mainData = useSelector(getData);
+  const ratio = useSelector(getRatio);
+  const userData = useSelector(getUser);
+  const token = useSelector(getToken);
+
+  const {call} = useAxios();
+
+  const handleOpenSheet = () => {
+    SheetManager.show('changeJar', {
+      payload: {
+        money: money,
+      },
+    });
+  };
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -40,9 +65,11 @@ const AddDetail = (props: Props) => {
   };
 
   const handleConfirm = (date: any) => {
+    const dateStr = date.toISOString();
     setData({
       ...data,
       date: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
+      dateString: dateStr,
     });
 
     hideDatePicker();
@@ -56,83 +83,101 @@ const AddDetail = (props: Props) => {
     return plate;
   };
 
-  const handleFinish = () => {
-    //| 'essential'
-    // | 'education'
-    // | 'saving'
-    // | 'enjoy'
-    // | 'investment'
-    // | 'charity'
-    // | string;
-    let newDataIO: DataIOMoney[] = [
-      {
-        id: 100,
-        amount: money * 0.55,
-        date: data.date,
-        description: data.note,
-        tag: [`#${data.tag}`],
-        type: type === 0 ? 'income' : 'expense',
-        jar: 'essential',
-        at: '2022-10-25',
-      },
-      {
-        id: 101,
-        amount: money * 0.1,
-        date: data.date,
-        description: data.note,
-        tag: [`#${data.tag}`],
-        type: type === 0 ? 'income' : 'expense',
-        jar: 'education',
-        at: '2022-10-25',
-      },
-      {
-        id: 102,
-        amount: money * 0.1,
-        date: data.date,
-        description: data.note,
-        tag: [`#${data.tag}`],
-        type: type === 0 ? 'income' : 'expense',
-        jar: 'saving',
-        at: '2022-10-25',
-      },
-      {
-        id: 103,
-        amount: money * 0.1,
-        date: data.date,
-        description: data.note,
-        tag: [`#${data.tag}`],
-        type: type === 0 ? 'income' : 'expense',
-        jar: 'enjoy',
-        at: '2022-10-25',
-      },
-      {
-        id: 104,
-        amount: money * 0.1,
-        date: data.date,
-        description: data.note,
-        tag: [`#${data.tag}`],
-        type: type === 0 ? 'income' : 'expense',
-        jar: 'investment',
-        at: '2022-10-25',
-      },
-      {
-        id: 105,
-        amount: money * 0.05,
-        date: data.date,
-        description: data.note,
-        tag: [`#${data.tag}`],
-        type: type === 0 ? 'income' : 'expense',
-        jar: 'charity',
-        at: '2022-10-25',
-      },
-    ];
+  const handlePushData = async () => {
+    let tmp = JSON.parse(JSON.stringify(mainData));
 
-    newDataIO.forEach(item => {
-      dispatch(addDataIOMoney(item));
+    tmp.jar.forEach((item: any, index: any) => {
+      item.history.push({
+        id: uuid.v4(),
+        type: type === 0 ? 'income' : type === 1 ? 'expense' : null,
+        date: data.dateString,
+        updateAt: new Date().toISOString(),
+        money: money * ratio[index],
+        tag: [data.tag],
+        description: data.note,
+        from: type === 1 || type === 0 ? null : null,
+        to: type === 1 || type === 0 ? null : null,
+      });
     });
-    // dispatch(addDataIOMoney(newDataIO));
 
-    nav.navigate('Home', {});
+    console.log(JSON.stringify(tmp));
+
+    await call({
+      config: {
+        url: Host + endPoint.updateMany.url,
+        method: endPoint.updateMany.method,
+        headers: {
+          collection: 'Data',
+          jwt: 'JWT ' + token.accessToken,
+        },
+        data: {
+          userID: userData.userID,
+          query: {
+            userID: userData.userID,
+          },
+          data: {
+            $set: {
+              ...tmp,
+            },
+          },
+          upsert: true,
+        },
+      },
+      isLoading: true,
+      callbackError: (err: any) => {
+        console.log(err);
+      },
+      callbackSuccess(data) {
+        if (data) {
+          func && func();
+          nav.navigate('Home', {});
+        }
+      },
+    });
+  };
+
+  const handleFinish = () => {
+    if (money === 0) {
+      dispatch(
+        setNotify({
+          show: true,
+          props: {
+            content: 'Vui lòng nhập số tiền',
+            accept: null,
+            denied: null,
+          },
+        }),
+      );
+      return;
+    }
+    if (data.date === '') {
+      dispatch(
+        setNotify({
+          show: true,
+          props: {
+            content: 'Vui lòng chọn ngày',
+            accept: null,
+            denied: null,
+          },
+        }),
+      );
+      return;
+    }
+    if (data.note === '') {
+      dispatch(
+        setNotify({
+          show: true,
+          props: {
+            content: 'Vui lòng nhập ghi chú',
+            accept: null,
+            denied: null,
+          },
+        }),
+      );
+      return;
+    }
+    handlePushData();
+    // nav.navigate('Home', {});
   };
 
   return (
@@ -152,8 +197,7 @@ const AddDetail = (props: Props) => {
       <TouchableOpacity
         style={styles.changeJar}
         onPress={() => {
-          console.log('change jar');
-          SheetManager.show('changeJar');
+          handleOpenSheet();
         }}>
         <View style={styles.iconLeft}>
           <View style={styles.iconLeftDetail}>

@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: ColorPalette.gray,
     borderRadius: 10,
+    opacity: 0.6,
   },
   icon: {
     width: '20%',

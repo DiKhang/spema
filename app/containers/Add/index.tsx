@@ -12,6 +12,7 @@ interface Params {
   layoutParams?: any;
   componentParams?: any;
   type?: number;
+  func?: () => void;
 }
 
 interface Props {
@@ -20,7 +21,7 @@ interface Props {
 
 const Add = (props: Props) => {
   const {params} = props;
-  const {name, layoutParams, componentParams, type} = params;
+  const {name, layoutParams, componentParams, type, func} = params;
   const [choose, setChoose] = useState(0);
 
   const changeChoose = (index: number) => {
@@ -78,7 +79,9 @@ const Add = (props: Props) => {
               </LinearGradient>
             </TouchableOpacity>
           </View>
-          {choose === 0 || choose === 1 ? <AddDetail type={choose} /> : null}
+          {choose === 0 || choose === 1 ? (
+            <AddDetail func={func} type={choose} />
+          ) : null}
         </View>
       </ScrollView>
     </View>

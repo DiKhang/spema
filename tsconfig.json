@@ -11,6 +11,7 @@
       "@utils/*": ["utils/*"],
       "@components/*": ["app/components/*"],
       "@hook/*":["app/hook/*"],
+      "@api/*":["app/api/*"],
     },
     "strict": false
   }

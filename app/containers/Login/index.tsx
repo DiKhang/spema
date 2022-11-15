@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Image,
   Text,
@@ -14,15 +15,21 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import {useState} from 'react';
 import useAxios from '@hook/useAxios';
+import Host, {endPoint} from '@api/host';
+import {useDispatch} from 'react-redux';
+import {setToken, setUser} from '../../redux/reducer/data';
+import {setNotify} from '../../redux/reducer/common';
 
 const Login = () => {
   const nav = useNavigation<any>();
 
+  const dispatch = useDispatch();
+
   const {call} = useAxios();
 
   const [data, setData] = useState({
-    username: 'dikhang4work@gmail.com',
-    password: '123123',
+    username: '',
+    password: '',
     check_textInputChange: false,
     secureTextEntry: true,
     isValidUser: true,
@@ -71,10 +78,23 @@ const Login = () => {
   };
 
   const handleLogin = () => {
+    if (data.username === '' || data.password === '') {
+      dispatch(
+        setNotify({
+          show: true,
+          props: {
+            content: 'Vui lòng nhập Email và Mật khẩu để tiến hành đăng nhập',
+            accept: null,
+            denied: null,
+          },
+        }),
+      );
+      return;
+    }
     call({
       config: {
-        url: 'https://sepma.onrender.com/api/v1/auth/login',
-        method: 'POST',
+        url: Host + endPoint.login.url,
+        method: endPoint.login.method,
         data: {
           username: data.username,
           password: data.password,
@@ -82,10 +102,30 @@ const Login = () => {
       },
       callbackSuccess: data => {
         console.log(data);
+        if (!data.status) {
+          dispatch(
+            setNotify({
+              show: true,
+              props: {
+                content: data,
+                accept: null,
+                denied: null,
+              },
+            }),
+          );
+          return;
+        }
+        dispatch(
+          setToken({
+            accessToken: data.data?.accessToken,
+            refreshToken: data.data?.refreshToken,
+          }),
+        );
+        dispatch(setUser(data.data?.user));
         nav.navigate('Home');
       },
       callbackError(e) {
-        console.log(e);
+        console.log('error:' + e);
       },
       isLoading: true,
     });
